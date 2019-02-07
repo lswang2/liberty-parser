@@ -18,7 +18,7 @@ setup(name='liberty-parser',
           'Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)',
           'Programming Language :: Python :: 3'
       ],
-      url='',
+      url='https://codeberg.org/tok/liberty-parser',
       author='T. Kramer',
       author_email='dont@spam.me',
       license='LGPL',

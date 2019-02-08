@@ -1,4 +1,4 @@
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Dict, Optional, Tuple
 from itertools import chain
 from .util import strings_to_array, array_to_strings, parse_boolean_function
 import numpy as np
@@ -8,11 +8,13 @@ class Group:
     def __init__(self, group_name: str,
                  args: List[str] = None,
                  attributes: Dict[str, Any] = None,
-                 groups: List = None):
+                 groups: List = None,
+                 defines: List[Tuple[str, str, str]] = None):
         self.group_name = group_name
         self.args = args if args is not None else []
         self.attributes = attributes if attributes is not None else dict()
         self.groups = groups if groups is not None else []
+        self.defines = defines if defines is not None else []
 
     def get_groups(self, type_name: str, argument: Optional[str] = None) -> List:
         """ Get all groups of type `type_name`.
@@ -136,6 +138,20 @@ class CellGroup(Group):
         super().__init__("cell", args=[cell_name], attributes=attributes,
                          groups=sub_groups)
         self.name = cell_name
+
+
+class Define:
+    def __init__(self, attribute_name, group_name, attribute_type):
+        """
+
+        :param attribute_name: Name of the new defined attribute.
+        :param group_name: Name of the group in which the attribute is created.
+        :param attribute_type: Data type of the attribute: boolean, string, integer or float
+        """
+
+        self.attribute_name = attribute_name
+        self.group_name = group_name
+        self.attribute_type = attribute_type
 
 
 class WithUnit:

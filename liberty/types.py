@@ -1,6 +1,7 @@
 from typing import Any, List, Dict, Optional, Tuple
 from itertools import chain
-from .util import strings_to_array, array_to_strings, parse_boolean_function
+from .boolean_functions import parse_boolean_function
+from .arrays import strings_to_array, array_to_strings
 import numpy as np
 
 

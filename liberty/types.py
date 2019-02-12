@@ -38,7 +38,8 @@ class Group:
         :return: Group
         """
         groups = self.get_groups(type_name, argument=argument)
-        assert len(groups) == 1, "There must be exactly one instance of group '{}'.".format(type_name)
+        assert len(groups) == 1, "There must be exactly one instance of group '{}'. " \
+                                 "Found {}.".format(type_name, len(groups))
         return groups[0]
 
     def __repr__(self) -> str:

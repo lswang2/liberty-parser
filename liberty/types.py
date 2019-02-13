@@ -220,21 +220,40 @@ def select_pin(cell: Group, pin_name: str) -> Optional[Group]:
         raise Exception("Pin name must be one of: {}".format(list(sorted(available_pin_names))))
 
 
-def select_timing_table(pin: Group, related_pin: str, table_name: str) -> Optional[Group]:
+def select_timing_table(pin: Group,
+                        related_pin: str,
+                        table_name: str,
+                        timing_type: str = None) -> Optional[Group]:
     """
     Select a timing table by name from a pin group.
     :param pin:
     :param related_pin:
     :param table_name:
+    :param timing_type: Select by 'timing_type' attribute.
     :return:
     """
-    timing_group_by_related_pin = {g['related_pin'].value: g for g in pin.get_groups('timing')
-                                   if 'related_pin' in g}
-    if related_pin not in timing_group_by_related_pin:
-        raise Exception(("Related pin name must be one of: {}".
-                         format(list(sorted(timing_group_by_related_pin.keys())))))
+    timing_groups_by_related_pin = dict()
+    for g in pin.get_groups('timing'):
+        if 'related_pin' in g:
+            timing_groups_by_related_pin.setdefault(g['related_pin'].value, []).append(g)
 
-    timing_group = timing_group_by_related_pin[related_pin]
+    # Select by 'related_pin'
+    if related_pin not in timing_groups_by_related_pin:
+        raise Exception(("Related pin name must be one of: {}".
+                         format(list(sorted(timing_groups_by_related_pin.keys())))))
+
+    timing_groups = timing_groups_by_related_pin[related_pin]
+
+    # Select by 'timing_type'
+    if timing_type is None and len(timing_groups) == 1:
+        timing_group = timing_groups[0]
+    else:
+        timing_groups_by_timing_type = {g['timing_type']: g for g in timing_groups}
+        if timing_type not in timing_groups_by_timing_type:
+            raise Exception(("'timing_type' must be one of: {}".
+                             format(list(sorted(timing_groups_by_timing_type.keys())))))
+        timing_group = timing_groups_by_timing_type[timing_type]
+
     available_table_names = {g.group_name for g in timing_group.groups}
 
     if table_name in available_table_names:

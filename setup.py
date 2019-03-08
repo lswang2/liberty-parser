@@ -7,7 +7,7 @@ def readme():
 
 
 setup(name='liberty-parser',
-      version='0.0.2',
+      version='0.0.3',
       description='Liberty format parser.',
       long_description=readme(),
       long_description_content_type="text/markdown",
@@ -21,7 +21,7 @@ setup(name='liberty-parser',
       url='https://codeberg.org/tok/liberty-parser',
       author='T. Kramer',
       author_email='dont@spam.me',
-      license='LGPL',
+      license='GPLv3',
       install_requires=[
           'numpy',
           'lark-parser'

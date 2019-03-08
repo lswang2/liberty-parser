@@ -11,7 +11,7 @@ setup(name='liberty-parser',
       description='Liberty format parser.',
       long_description=readme(),
       long_description_content_type="text/markdown",
-      keywords='liberty',
+      keywords='liberty parser',
       classifiers=[
           'Development Status :: 3 - Alpha',
           'Topic :: Scientific/Engineering',

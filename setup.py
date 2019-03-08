@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def readme():
@@ -7,7 +7,7 @@ def readme():
 
 
 setup(name='liberty-parser',
-      version='0.0.3',
+      version='0.0.4',
       description='Liberty format parser.',
       long_description=readme(),
       long_description_content_type="text/markdown",
@@ -22,6 +22,7 @@ setup(name='liberty-parser',
       author='T. Kramer',
       author_email='dont@spam.me',
       license='GPLv3',
+      packages=find_packages(),
       install_requires=[
           'numpy',
           'lark-parser'

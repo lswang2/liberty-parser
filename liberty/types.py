@@ -85,27 +85,42 @@ class Group:
         for k, v in sorted(self.attributes.items()):
             if isinstance(v, list):
                 # Complex attribute
-                formatted = [format_value(x) for x in v]
-
-                if any((isinstance(x, EscapedString) for x in v)):
-                    attr_lines.append('{} ('.format(k))
-                    for i, l in enumerate(formatted):
-                        if i < len(formatted) - 1:
-                            end = ', \\'
+                if isinstance(v[0],list):
+                    for vv in v:
+                        formatted = [format_value(x) for x in vv]
+                        if any((isinstance(x, EscapedString) for x in vv)):
+                            attr_lines.append('{} ('.format(k))
+                            for i, l in enumerate(formatted):
+                                if i < len(formatted) - 1:
+                                    end = ', \\'
+                                else:
+                                    end = ''
+                                attr_lines.append(indent + l + end)
+                            attr_lines.append(');')
                         else:
-                            end = ''
-                        attr_lines.append(indent + l + end)
-                    attr_lines.append(');')
+                            values = "({})".format(", ".join(formatted))
+                            attr_lines.append("{} {};".format(k, values))
                 else:
-                    values = "({})".format(", ".join(formatted))
-                    attr_lines.append("{} {};".format(k, values))
+                    formatted = [format_value(x) for x in v]
+                    if any((isinstance(x, EscapedString) for x in v)):
+                        attr_lines.append('{} ('.format(k))
+                        for i, l in enumerate(formatted):
+                            if i < len(formatted) - 1:
+                                end = ', \\'
+                            else:
+                                end = ''
+                            attr_lines.append(indent + l + end)
+                        attr_lines.append(');')
+                    else:
+                        values = "({})".format(", ".join(formatted))
+                        attr_lines.append("{} {};".format(k, values))
             else:
                 # Simple attribute
                 values = format_value(v)
                 attr_lines.append("{}: {};".format(k, values))
 
         lines = list()
-        lines.append("{} ({}) {{".format(self.group_name, ", ".join(self.args)))
+        lines.append('{} ({}) {{'.format(self.group_name, ", ".join(list(map(lambda x:str(x),self.args)))))
         for l in chain(attr_lines, *sub_group_lines):
             lines.append(indent + l)
 

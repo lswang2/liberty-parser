@@ -124,7 +124,19 @@ class LibertyTransformer(Transformer):
         defines = []
         for a in body:
             if isinstance(a, dict):
-                attrs.update(a)
+                k = list(a.keys())[0]
+                if k in attrs.keys():
+                    if isinstance(a[k],list):
+                        if isinstance(attrs[k][0],list):
+                            attrs[k].append(a[k])
+                        else:
+                            attrs[k] = [attrs[k],a[k]]
+                    elif isinstance(attrs[k],list):
+                        attrs[k].append(a[k])
+                    else:
+                        attrs[k] = [attrs[k],a[k]]
+                else:
+                    attrs.update(a)
             elif isinstance(a, Group):
                 sub_groups.append(a)
             elif isinstance(a, Define):

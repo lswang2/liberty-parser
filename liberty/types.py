@@ -83,26 +83,11 @@ class Group:
         sub_group_lines = [g._format(indent=indent) for g in self.groups]
         attr_lines = list()
         for k, v in sorted(self.attributes.items()):
-            if isinstance(v, list):
-                # Complex attribute
-                if isinstance(v[0],list):
-                    for vv in v:
-                        formatted = [format_value(x) for x in vv]
-                        if any((isinstance(x, EscapedString) for x in vv)):
-                            attr_lines.append('{} ('.format(k))
-                            for i, l in enumerate(formatted):
-                                if i < len(formatted) - 1:
-                                    end = ', \\'
-                                else:
-                                    end = ''
-                                attr_lines.append(indent + l + end)
-                            attr_lines.append(');')
-                        else:
-                            values = "({})".format(", ".join(formatted))
-                            attr_lines.append("{} {};".format(k, values))
-                else:
-                    formatted = [format_value(x) for x in v]
-                    if any((isinstance(x, EscapedString) for x in v)):
+            # Complex attribute
+            if isinstance(v[0],list):
+                for vv in v:
+                    formatted = [format_value(x) for x in vv]
+                    if any((isinstance(x, EscapedString) for x in vv)):
                         attr_lines.append('{} ('.format(k))
                         for i, l in enumerate(formatted):
                             if i < len(formatted) - 1:
@@ -115,9 +100,10 @@ class Group:
                         values = "({})".format(", ".join(formatted))
                         attr_lines.append("{} {};".format(k, values))
             else:
-                # Simple attribute
-                values = format_value(v)
-                attr_lines.append("{}: {};".format(k, values))
+                for vv in v:
+                    # Simple attribute
+                    values = format_value(vv)
+                    attr_lines.append("{}: {};".format(k, values))
 
         lines = list()
         lines.append('{} ({}) {{'.format(self.group_name, ", ".join(list(map(lambda x:str(x),self.args)))))

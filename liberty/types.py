@@ -105,9 +105,13 @@ class Group:
                     values = format_value(vv)
                     attr_lines.append("{}: {};".format(k, values))
 
+        define_lines = list()
+        for d in self.defines:
+            define_lines.append('define ({}, {}, {});'.format(d.attribute_name,d.group_name,d.attribute_type))
+
         lines = list()
         lines.append('{} ({}) {{'.format(self.group_name, ", ".join(list(map(lambda x:str(x),self.args)))))
-        for l in chain(attr_lines, *sub_group_lines):
+        for l in chain(attr_lines, define_lines, *sub_group_lines):
             lines.append(indent + l)
 
         lines.append("}")
@@ -174,6 +178,12 @@ class Define:
         self.attribute_name = attribute_name
         self.group_name = group_name
         self.attribute_type = attribute_type
+
+    def __str__(self):
+        return 'define ({}, {}, {});'.format(self.attribute_name, self.group_name, self.attribute_type)
+
+    def __repr__(self):
+        return '"' + str(self) + '"'
 
 
 class WithUnit:

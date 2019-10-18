@@ -9,3 +9,12 @@ library = parse_liberty(open(liberty_file).read())
 
 print(str(library))
 ```
+
+Load/save functions
+```python
+from liberty.parser import *
+library = load_liberty(original_filename)
+
+save_liberty(library,new_filename)
+
+```

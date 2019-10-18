@@ -154,6 +154,21 @@ def parse_liberty(data: str) -> Group:
     library = liberty_parser.parse(data)
     return library
 
+def load_liberty(filename: str) -> Group:
+    """
+    Parse a liberty file.
+    :param filename: liberty file name string.
+    :return: `Group` object of library.
+    """
+    return parse_liberty(open(filename,'r').read())
+
+def save_liberty(library: Group, filename: str):
+    """
+    save to new liberty file
+    """
+    with open(filename,'w') as f:
+        f.write(str(library))
+
 
 def test_parse_liberty1():
     data = r"""

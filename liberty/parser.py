@@ -84,6 +84,10 @@ class LibertyTransformer(Transformer):
         return s[:]
 
     def number(self, s):
+        if '.0'==s[-2:]:
+            return int(s[:-2])
+        elif not '.' in s:
+            return int(s)
         return float(s)
 
     unit = string
@@ -93,8 +97,6 @@ class LibertyTransformer(Transformer):
         return list(args)
 
     def number_with_unit(self, num, unit):
-        if num==1.0:	# fix parse error of library compiler
-            num = 1	# lc_shell rejects values like 1.0uA
         return WithUnit(num, unit)
 
     def simple_attribute(self, name, value):

@@ -93,6 +93,8 @@ class LibertyTransformer(Transformer):
         return list(args)
 
     def number_with_unit(self, num, unit):
+        if num==1.0:	# fix parse error of library compiler
+            num = 1	# lc_shell rejects values like 1.0uA
         return WithUnit(num, unit)
 
     def simple_attribute(self, name, value):

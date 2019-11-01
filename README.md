@@ -18,3 +18,5 @@ library = load_liberty(original_filename)
 save_liberty(library,new_filename)
 
 ```
+
+save_liberty is verified by library_compiler

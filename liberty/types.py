@@ -61,6 +61,22 @@ class Group:
                                  "Found {}.".format(type_name, len(groups))
         return groups[0]
 
+    def pop_groups(self, type_name: str, argument: Optional[str] = None) -> List:
+        """ Get all groups of type `type_name`.
+        Optionally filter the groups by their first argument.
+        :param type_name:
+        :param argument:
+        :return: List[Group]
+        """
+        r = []
+        for i in range(len(self.groups)-1,-1,-1):
+            g = self.groups[i]
+            if g.group_name == type_name and (argument is None or
+                     (len(g.args) > 0 and g.args[0] == argument)):
+                self.groups.pop(i)
+                r.insert(0,g)
+        return r
+
     def __repr__(self) -> str:
         return "%s (%s) t{%s, %s}" % (self.group_name, self.args, self.attributes, self.groups)
 
@@ -71,29 +87,23 @@ class Group:
         """
         return "\n".join(self._format())
 
-    def _format(self, indent: str = " " * 2) -> List[str]:
-        """
-        Create the liberty file format line by line.
-        :return: A list of lines.
-        """
-
+    def format_attr(self, attr, indent:str = " " * 2) -> List[str]:
         def format_value(v) -> str:
             return str(v)
 
-        sub_group_lines = [g._format(indent=indent) for g in self.groups]
         attr_lines = list()
-        for k, v in sorted(self.attributes.items()):
+        for k, v in sorted(attr.items()):
             # Complex attribute
             if isinstance(v[0],list):
                 for vv in v:
                     formatted = [format_value(x) for x in vv]
                     if any((isinstance(x, EscapedString) for x in vv)):
-                        attr_lines.append('{} ('.format(k))
+                        attr_lines.append('{} ( \\'.format(k))
                         for i, l in enumerate(formatted):
                             if i < len(formatted) - 1:
                                 end = ', \\'
                             else:
-                                end = ''
+                                end = ' \\'
                             attr_lines.append(indent + l + end)
                         attr_lines.append(');')
                     else:
@@ -104,14 +114,35 @@ class Group:
                     # Simple attribute
                     values = format_value(vv)
                     attr_lines.append("{}: {};".format(k, values))
+        return attr_lines
+
+    def _format(self, indent: str = " " * 2) -> List[str]:
+        """
+        Create the liberty file format line by line.
+        :return: A list of lines.
+        """
+
+        sub_group_lines = [g._format(indent=indent) for g in self.groups]
+        attr_before_define = {}
+        attr_after_define = {}
+        for k,v in self.attributes.items():
+            if k=='members' or k=='date' or k=='comment' or k=='revision' or k=='delay_model':
+                attr_before_define[k] = v
+            else:
+                attr_after_define[k] = v
+
+        attr_before_define_lines = self.format_attr(attr_before_define,indent)
+        attr_after_define_lines = self.format_attr(attr_after_define,indent)
 
         define_lines = list()
         for d in self.defines:
             define_lines.append('define ({}, {}, {});'.format(d.attribute_name,d.group_name,d.attribute_type))
 
         lines = list()
+        # by wang 2019/09/18
+        #lines.append('{} ({}) {{'.format(self.group_name, ", ".join(self.args)))
         lines.append('{} ({}) {{'.format(self.group_name, ", ".join(list(map(lambda x:str(x),self.args)))))
-        for l in chain(attr_lines, define_lines, *sub_group_lines):
+        for l in chain(attr_before_define_lines, define_lines, attr_after_define_lines, *sub_group_lines):
             lines.append(indent + l)
 
         lines.append("}")

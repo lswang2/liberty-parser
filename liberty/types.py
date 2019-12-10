@@ -113,7 +113,7 @@ class Group:
                 for vv in v:
                     # Simple attribute
                     values = format_value(vv)
-                    attr_lines.append("{}: {};".format(k, values))
+                    attr_lines.append("{} : {};".format(k, values))
         return attr_lines
 
     def _format(self, indent: str = " " * 2) -> List[str]:
